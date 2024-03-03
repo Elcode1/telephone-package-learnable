@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telephone Package</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #telephone-container {
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #e6a00a;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div id="telephone-container">
+        <h2>Telephone Package</h2>
+        <button onclick="addPhoneNumber()">Add Phone Number</button>
+        <button onclick="removePhoneNumber()">Remove Phone Number</button>
+        <button onclick="dialPhoneNumber()">Dial Phone Number</button>
+    </div>
+
+    <script>
+        // Observer interface
+        class Observer {
+            notify(phoneNumber) {}
+        }
+
+        // Concrete Observer 1
+        class PrintPhoneNumberObserver extends Observer {
+            notify(phoneNumber) {
+                console.log(`Dialing: ${phoneNumber}`);
+            }
+        }
+
+        // Concrete Observer 2
+        class PrintDialingMessageObserver extends Observer {
+            notify(phoneNumber) {
+                console.log(`Now Dialing: ${phoneNumber}`);
+            }
+        }
+
+        // Subject (Telephone) class using the Observer pattern
+        class Telephone {
+            constructor() {
+                this.phoneNumbers = new Set();
+                this.observers = new Set();
+            }
+
+            addObserver(observer) {
+                this.observers.add(observer);
+            }
+
+            removeObserver(observer) {
+                this.observers.delete(observer);
+            }
+
+            notifyObservers(phoneNumber) {
+                this.observers.forEach(observer => observer.notify(phoneNumber));
+            }
+
+            addPhoneNumber() {
+                const phoneNumber = prompt("Enter a new phone number:");
+                if (phoneNumber) {
+                    this.phoneNumbers.add(phoneNumber);
+                }
+            }
+
+            removePhoneNumber() {
+                const phoneNumber = prompt("Enter the phone number to remove:");
+                if (phoneNumber) {
+                    this.phoneNumbers.delete(phoneNumber);
+                }
+            }
+
+            dialPhoneNumber() {
+                const phoneNumber = prompt("Enter the phone number to dial:");
+                if (this.phoneNumbers.has(phoneNumber)) {
+                    console.log(`Dialing: ${phoneNumber}`);
+                    this.notifyObservers(phoneNumber);
+                } else {
+                    console.log(`Phone number ${phoneNumber} not found.`);
+                }
+            }
+        }
+
+        // Creating instances
+        const telephone = new Telephone();
+        const observer1 = new PrintPhoneNumberObserver();
+        const observer2 = new PrintDialingMessageObserver();
+
+        // Adding observers to the telephone
+        telephone.addObserver(observer1);
+        telephone.addObserver(observer2);
+
+        // Example usage
+        function addPhoneNumber() {
+            telephone.addPhoneNumber();
+        }
+
+        function removePhoneNumber() {
+            telephone.removePhoneNumber();
+        }
+
+        function dialPhoneNumber() {
+            telephone.dialPhoneNumber();
+        }
+    </script>
+</body>
+</html>
